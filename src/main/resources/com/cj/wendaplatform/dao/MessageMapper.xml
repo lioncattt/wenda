@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cj.wendaplatform.dao.MessageMapper">
+    <sql id="table">message</sql>
+    <sql id="insertFields">from_id, to_id, content,
+            has_read, conversation_id, created_date
+    </sql>
+
+    <select id="selectConversationList"
+            resultType="com.cj.wendaplatform.model.Message">
+       <!-- select
+        <include refid="insertFields"/>
+        count(id) as id
+        from (SELECT * FROM <include refid="table"/>
+        where from_id = #{userId} or to_id = #{userId}
+        ORDER BY created_date DESC
+        LIMIT 0,1000000000000000) tt
+        GROUP BY conversation_id
+        ORDER BY created_date DESC limit #{offset}, #{limit}-->
+        /*先查出每个分组有几条记录 再内连去重*/
+        select m1.from_id, m1.to_id, m1.content, m1.has_read,
+        m1.conversation_id, m1.created_date,
+        (select count(*)
+        from message m2
+        where m2.conversation_id = m1.conversation_id
+        ) as msgNumbers
+        from message m1
+        join (
+        select conversation_id, max(created_date) as created_date
+        from message
+        group by conversation_id) m3
+        on m3.conversation_id = m1.conversation_id
+        where m1.created_date = m3.created_date
+        and (from_id = #{userId} or to_id = #{userId})
+        order by m1.created_date desc
+        limit #{offset}, #{limit}
+    </select>
+</mapper>

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>register</title>
+    <link rel="shortcut icon" th:href="@{/favicon.ico}">
+    <link rel="stylesheet" th:href="@{/styles/default.css}" href="/default.css">
+    <link rel="stylesheet" th:href="@{/styles/global.css}" href="/global.css">
+    <link rel="stylesheet" th:href="@{/styles/ui.css}" href="/ui.css">
+    <link rel="stylesheet" th:href="@{/styles/base.css}" href="/base.css">
+    <link rel="stylesheet" th:href="@{/styles/regLogin.css}" href="/regLogin.css">
+</head>
+<body>
+<div class="nk-main clearfix">
+    <div class="wrapper">
+        <div class="tabbed">
+            <ul class="clearfix">
+
+                <li style="width:100%" class="tab-selected"><a href="javascript:void(0);"><span class="tab-reg"></span>注册</a></li>
+            </ul>
+        </div>
+        <div class="wrapper-content clearfix">
+            <div class="input-section">
+                <form id="form1" method="post" th:action="@{/user/reg}">
+                    <div class="form-group">
+                        <label for="jsEmailIpt" class="control-label">手机号码</label>
+                        <div class="control-group">
+                            <input type="text" id="jsEmailIpt"
+                                   placeholder="请输入手机号码" autocomplete="off" name="phone">
+                            <i class="input-icon fui-cross"></i>
+                            <i class="input-icon fui-check-inverted"></i>
+                            <span id="phoneTip" class="input-tip"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="jsCaptcha" class="control-label">验证码</label>
+                        <div class="btn-group phone-code">
+                            <div class="control-group">
+                                <input autocomplete="off" name="captcha" type="text" id="jsCaptcha" placeholder="请输入验证码">
+                                <i class="input-icon fui-cross"></i>
+                                <i class="input-icon fui-check-inverted"></i>
+                                <span id="captchaTip" class="input-tip"></span>
+                            </div>
+                            <span class="input-group-btn">
+                                <button class="btn btn-primary" id="jsSendCaptcha" type="button"
+                                        style="padding:0 5px;">获取验证码</button>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!--将next参数传递-->
+                    <input class="nextClass" name = "next" type="hidden" th:value="${next!=null}?${next}">
+
+                    <div class="form-group ">
+                        <label for="jsEmailIpt"  class="control-label">用户名</label>
+                        <div class="control-group">
+                            <input name="name" autocomplete="off" type="text" id="username" placeholder="请输入用户名">
+                            <i class="input-icon fui-cross"></i>
+                            <i class="input-icon fui-check-inverted"></i>
+                            <span id="tip01" class="input-tip" style="display: none">用户名不为空或空格</span>
+                            <span id="tip02" class="input-tip" style="display: none">
+                                用户名长度3-12位字母或数字</span>
+                            <span id="tip05" class="input-tip" style="display: none">用户名已被注册</span>
+                            <span id="tip06" class="input-tip" style="display: none">请检查用户名和密码</span>
+                        </div>
+
+                    </div>
+                        <div class="form-group">
+                            <label for="jsPasswordIpt" class="control-label">密码</label>
+                            <div class="control-group">
+                                <input name="password" autocomplete="off" type="password" id="jsPasswordIpt" placeholder="请输入密码">
+                                <i class="input-icon fui-cross"></i>
+                                <i class="input-icon fui-check-inverted"></i>
+                                <span id="tip03" class="input-tip" style="display: none">
+                                    密码不能为空或空格
+                                </span>
+                                <span id="tip04" class="input-tip" style="display: none">
+                                密码长度为5-10位
+                                </span>
+                                <span id="tip07" class="input-tip" style="display: none">
+                                服务器开小差了，请稍后重试
+                                </span>
+                            </div>
+                        </div>
+
+                    <div class="form-group clearfix">
+                        <div id="jsGtCode" style="float:right;"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-input-login">
+                            <button type="button" class="btn btn-primary btn-block"  id="jsRegisterBtn">立即注册</button>
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" th:src="@{/scripts/jquery-1.8.3.min.js}"></script>
+<script>
+    $(function () {
+
+        /*获取项目根路径*/
+        function getRootPath(){
+            var strFullPath=window.document.location.href;
+            var strPath=window.document.location.pathname;
+            var pos=strFullPath.indexOf(strPath);
+            var prePath=strFullPath.substring(0,pos);
+            var postPath=strPath.substring(0,strPath.substr(1).indexOf('/')+1);
+            return(prePath+postPath);
+        }
+
+        /**
+         * [btnCheck 按钮倒计时]
+         */
+        function btnCheck() {
+            var time = 60;
+            $(this).attr("disabled", true);
+            var timer = setInterval(function() {
+                if (time == 0) {
+                    clearInterval(timer);
+                    $("#jsSendCaptcha").attr({class:"btn btn-primary"});
+                    $("#jsSendCaptcha").attr("disabled", false);
+                    $("#jsSendCaptcha").text("获取验证码");
+
+                } else {
+                    $("#jsSendCaptcha").attr({class:"btn btn-default"});
+                    $('#jsSendCaptcha').text(time + "秒后重新获取");
+                    time--;
+                }
+            }, 1000);
+        }
+
+        //发送验证码
+        $("#jsSendCaptcha").click(function () {
+            if (!phoneflag) {
+                alert("手机号已被注册");
+                return;
+            }
+            var phoneNumber = $("#jsEmailIpt").val();
+            var reg =  /^\s*$/;
+            if(!reg.test(phoneNumber)) {
+                var uri = $("#form1").attr("action") +"/" + phoneNumber;
+               $.ajax({
+                   type: "post",
+                   url: uri,
+                   dataType: "json",
+                   data:{
+                       "phoneNumber": phoneNumber
+                   },
+                   success:function (data) {
+                       if(data.data.errCode==40001) {//阿里云服务器异常
+                           $("#jsCaptcha").parent("div").attr({class: "control-group error"});
+                           $("#captchaTip").text("服务器开小差了请稍后重试")
+                       } else {
+                           btnCheck();
+                       }
+                   },
+                   error:function (data) {
+                       alert("fail");
+                   }
+
+               })
+            } return;
+        });
+
+
+        //注册表单提交
+        $("#jsRegisterBtn").click(function () {
+            var reg =  /^\s*$/;
+            var uri = $("#form1").attr("action");
+            var next = $(".nextClass").val();
+            if(UserNameValidate() && PasswordValidate() && PhoneValidate()) {
+                if(!reg.test($("#jsCaptcha").val())) {
+                    $.ajax({
+                        type: "post",
+                        url: uri,
+                        dataType: "json",
+                        data:$("#form1").serialize(),
+                        success:function (data) {
+                            if(data.data.errCode==20005) {
+                                $("#jsCaptcha").parent("div").attr({class: "control-group error"});
+                                $("#captchaTip").text("验证码不能为空")
+                            } else if(data.data.errCode==20004) {
+                                $("#jsCaptcha").parent("div").attr({class: "control-group error"});
+                                $("#captchaTip").text("验证码输入有误或已过期")
+
+                            } else if(data.data.errCode==10001) { //传入user不合法
+                                $("#username").parent("div").attr({class: "control-group error"});
+                                $("#tip06").attr({style: "display:inline"})
+
+                            } else if(data.data.errCode==20003 || data.data.errCode==30001) {
+                                //生成用户对应ticket失败或数据库异常
+                                $("#tip07").attr({style: "display:inline"})
+
+                            } else if(data.data.successMsg == 0) {//登录至之前的页面
+                                var array = new Array();
+                                array = next.split('/');
+                                window.location.href = getRootPath()+"/"+array[2]+"/"+array[3];
+                            } else if(data.data.successMsg == 1) { //至首页
+                                window.location.href = getRootPath()
+                            }
+                        },
+                        error:function (data) {
+                            alert("failed");
+                        }
+                    })
+                } else {
+                    $("#jsCaptcha").parent("div").attr({class: "control-group error"});
+                    $("#captchaTip").text("验证码不能为空")
+                }
+
+
+            }
+        });
+
+
+
+        function CaptchaValidate() {//验证码判空
+            var reg =  /^\s*$/;
+            var captcha = $("#jsCaptcha").val();
+            if(reg.test(captcha)) {
+                return false;
+            }  return true;
+        }
+
+        var preUsername = ""; //保存当前用户的名字
+        var flag = false;//判断是否已经注册 false已被注册
+        function UserNameValidate() {  /*校验用户名*/
+
+            var username = $("#username").val();
+            //只能是字母，数字，
+            var reg = /^[a-zA-Z0-9]{3,12}$/;
+            //判空或空格
+            var reg2 = /^\s*$/;
+            //查询当前用户名的请求路径
+            var regUri = $("#form1").attr("action") +"Name/" + $("#username").val();
+
+            if(reg2.test(username)) {
+                $("#username").parent("div").attr({class: "control-group error"});
+                $("#tip01").attr({style: "display:inline"});
+
+                return false;
+            } else if(!reg.test(username)) {
+                $("#username").parent("div").attr({class: "control-group error"});
+                $("#tip02").attr({style: "display:inline"});
+
+                return false;
+            }  else {
+                if(username != preUsername) {
+                    $.get(regUri, function (data) {
+                        if(data.data.result==0) { //0未被注册
+                            $("#username").parent("div").attr(
+                                {class: "control-group success"});
+                            $("#tip05").attr({style: "display:none"});
+
+                            flag =  true;
+                        } else { //1表示已被注册
+                            $("#username").parent("div").attr(
+                                {class: "control-group error"});
+                            $("#tip05").attr({style: "display:inline"});
+
+                            flag = false;
+                        }
+                    });
+                    //保存当前username和下一次输入比较
+                    preUsername = username;
+                } else if(!flag){  //同一个已被注册的用户名flag=false,再次进来需要添加样式
+                    $("#username").parent("div").attr(
+                        {class: "control-group error"});
+                    $("#tip05").attr({style: "display:inline"});
+                }
+
+                return flag;
+
+            }
+
+
+        }
+
+        var currentPhone = "";
+        var phoneflag =false;
+        //校验手机合法性
+        function PhoneValidate() {
+            var phoneNumber = $("#jsEmailIpt").val();
+            //查询当前用户名的请求路径
+            var regUri = $("#form1").attr("action") +"Phone/" + $("#jsEmailIpt").val();
+            var reg = /^\s*$/;
+            var reg2 = /^[1]([3-9])[0-9]{9}$/;
+            if(reg.test(phoneNumber)) {
+                $("#jsEmailIpt").parent("div").attr({class: "control-group error"});
+                $("#phoneTip").text("手机号不能为空")
+                return false;
+            } else if(!reg2.test(phoneNumber)) {
+                $("#jsEmailIpt").parent("div").attr({class: "control-group error"});
+                $("#phoneTip").text("手机号格式不正确")
+                return false;
+            } else {
+                if(currentPhone!=phoneNumber) {
+                    $.get(regUri, function (data) {
+                        if(data.data.phoneMsg == 1) {
+                            $("#jsEmailIpt").parent("div").attr({class: "control-group error"});
+                            $("#phoneTip").text("手机号已被注册");
+                            phoneflag =false;
+                        } else if(data.data.phoneMsg == 0) {
+                            $("#jsEmailIpt").parent("div").attr({class: "control-group success"});
+                            phoneflag = true;
+                        }
+                    });
+                    currentPhone = phoneNumber;
+                } else if(!phoneflag) {  //当已被注册的手机号再次触发该函数时也需要载入错误样式
+                    $("#jsEmailIpt").parent("div").attr({class: "control-group error"});
+                    $("#phoneTip").text("手机号已被注册");
+                }
+                return phoneflag;
+            }
+        }
+
+        function PasswordValidate() { //密码校验
+            var password = $("#jsPasswordIpt").val();
+            //
+            var reg = /^[\S\n\s]{5,10}$/;
+            var reg2 = /^\s*$/;
+            if(reg2.test(password)) {
+                $("#jsPasswordIpt").parent("div").attr({class: "control-group error"});
+                $("#tip03").attr({style: "display:inline"})
+                return false;
+            } else if(!reg.test(password)) {
+                $("#jsPasswordIpt").parent("div").attr({class: "control-group error"});
+                $("#tip04").attr({style: "display:inline"})
+                return false;
+            } else {
+                $("#jsPasswordIpt").parent("div").attr({class: "control-group success"});
+                $("#tip03").attr({style: "display:none"})
+                $("#tip04").attr({style: "display:none"})
+            }
+            return true;
+        }
+
+        //手机号校验
+        $("#jsEmailIpt").blur(function () {
+            PhoneValidate();
+        });
+
+
+        $("#jsEmailIpt").focus(function () {
+            $("#jsEmailIpt").parent("div").attr({class: "control-group"});
+            $("#phoneTip").text("")
+        });
+
+        //=============
+        $("#jsCaptcha").focus(function () { //获得焦点清除错误信息
+            $("#jsCaptcha").parent("div").attr({class: "control-group"});
+            $("#captchaTip").text("")
+        });
+        //=============
+        //用户名校验
+        $("#username").blur(function () {
+            UserNameValidate();
+        });
+        //获得焦点
+        $("#username").focus(function () {
+                $("#username").parent("div").attr({class: "control-group"});
+                $("#tip01").attr({style: "display:none"});
+                $("#tip02").attr({style: "display:none"});
+                $("#tip05").attr({style: "display:none"});
+                $("#tip06").attr({style: "display:none"});
+        });
+      //==================
+        //密码校验
+        $("#jsPasswordIpt").blur(function () {
+            PasswordValidate();
+        });
+
+        //获得焦点
+        $("#jsPasswordIpt").focus(function () {
+            $("#jsPasswordIpt").parent("div").attr({class: "control-group"});
+            $("#tip03").attr({style: "display:none"});
+            $("#tip04").attr({style: "display:none"})
+        })
+
+    })
+
+
+</script>
+</body>
+</html>

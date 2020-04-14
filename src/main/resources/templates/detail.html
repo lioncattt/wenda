@@ -1,0 +1,296 @@
+
+<!DOCTYPE html>
+<!-- saved from url=(0029)#signin -->
+<html lang="zh-CN" dropeffect="none" xmlns:th="http://www.thymeleaf.org"
+      class="js is-AppPromotionBarVisible cssanimations csstransforms csstransitions flexbox no-touchevents no-mobile" style="">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-ZA-Response-Id" content="46acde5c53db46f2806ccad726de9826">
+    <title>QuestionDetail</title>
+    <meta name="apple-itunes-app" content="app-id=432274380">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta http-equiv="mobile-agent" content="format=html5;url=https://nowcoder.com/">
+    <meta id="znonce" name="znonce" content="d3edc464cf014708819feffde7ddd01e">
+    <link rel="shortcut icon" th:href="@{/favicon.ico}">
+    <link rel="search" type="application/opensearchdescription+xml" href="https://nowcoder.com/static/search.xml" title="牛客">
+    <link rel="stylesheet" type="text/css" th:href="@{/styles/bootstrap.min.css}" href="../styles/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/styles/detail.css}" href="../styles/detail.css">
+    <style>
+        .zm-item-answer-author-info a.collapse {margin-top: 0}
+    </style>
+
+</head>
+<body class="zhi ">
+<!--header-->
+<div th:replace="commons/header :: #topbar"></div>
+
+<div class="zg-wrap zu-main clearfix with-indention-votebar" itemscope="" itemtype="http://schema.org/Question"
+     id="zh-single-question-page" data-urltoken="36301524" role="main">
+    <div class="zu-main-content">
+        <div class="zu-main-content-inner">
+            <meta itemprop="isTopQuestion" content="false">
+            <meta itemprop="visitsCount" content="402">
+
+            <div id="zh-question-title" data-editable="true" class="zm-editable-status-normal">
+                <h2 class="zm-item-title">
+
+                    <span class="zm-editable-content" th:text="${question!=null}?${question.title}">
+                    </span>
+
+                </h2>
+            </div>
+            <div id="zh-question-detail" class="zm-item-rich-text zm-editable-status-normal">
+                <div class="zm-editable-content" th:text="${question!=null}?${question.content}"></div>
+            </div>
+
+            <div class="zm-side-section">
+                <div class="zm-side-section-inner" id="zh-question-side-header-wrap">
+                    <!--followed = true 表示当前用户已关注该问题-->
+                    <button th:if="${followed}" class="follow-button zg-follow zg-btn-white js-follow-question"
+                            data-id="${question.id}" th:attr="data-id=${question.id}"
+                            data-status="1">
+                        取消关注
+                    </button>
+                    <!--followed = false 表示当前用户未关注该问题-->
+                    <button th:if="${!followed}"
+                            class="follow-button zg-follow zg-btn-green js-follow-question"
+                            data-id="${question.id}" th:attr="data-id=${question.id}">
+                        关注问题
+                    </button>
+                    <!--关注该问题的用户列表-->
+                    <div class="zh-question-followers-sidebar">
+                        <div class="zg-gray-normal">
+                            <a href="javascript:void(0);">
+                                <strong class="js-user-count" th:text="${followUsers.size()}">
+                                    ${followUsers.size()}
+                                </strong>
+                            </a>人关注该问题
+                        </div>
+                        <div class="list zu-small-avatar-list zg-clear js-user-list">
+                            <!--#foreach($vo in $followUsers)显示当前关注该问题的用户-->
+                            <a th:each="vo:${followUsers}"
+                               class="zm-item-link-avatar js-user-${vo.id}"
+                               th:classappend="'js-user-'+${vo.getObjs('id')}"
+                               th:attr="data-data-original_title=${vo.getObjs('name')}"
+                               href="/user/${vo.id}"
+                               th:href="@{/user/profile/}+${vo.getObjs('id')}"
+                               data-original_title="${vo.name}">
+                                <img src="${vo.headUrl}" th:src="${vo.getObjs('headUrl')}"
+                                     class="zm-item-img-avatar">
+                            </a>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="zh-question-answer-wrap" data-pagesize="10" class="zh-question-answer-wrapper navigable"
+                 data-widget="navigable" data-navigable-options="{&quot;items&quot;: &quot;&gt;.zm-item-answer&quot;}"
+                 data-init="{&quot;params&quot;: {&quot;url_token&quot;: 36301524, &quot;pagesize&quot;: 10, &quot;offset&quot;: 0}, &quot;nodename&quot;: &quot;QuestionAnswerListV2&quot;}">
+
+                <!--#foreach($comment in $comments)--><!--回答区-->
+                <div th:each="comment:${comments}"
+                     class="zm-item-answer  zm-item-expanded js-comment">
+                    <link itemprop="url" href="">
+                    <meta itemprop="answer-id" content="22162611">
+                    <meta itemprop="answer-url-token" content="66862039">
+                    <a class="zg-anchor-hidden" name="answer-22162611"></a>
+                    <div class="zm-votebar goog-scrollfloater js-vote"
+                         th:attr="data-id=${comment.getObjs('comment').id}" >
+                       <!--赞过返回1 显示赞过的样式--><!--th:if="${comment.getObjs('liked')>0}"-->
+
+                            <!--没赞过返回0-->
+                        <button th:class="${comment.getObjs('liked')<=0}?'up js-like':'up js-like pressed'"
+                                title="赞同" id="likebtn" onclick="postLike(this)">
+                            <i class="icon vote-arrow"></i>
+                            <span class="count js-voteCount"
+                                  th:text="${comment.getObjs('likeCount')}">
+                            </span>
+                            <span class="label sr-only">赞同</span>
+                        </button>
+
+
+                                 <!--踩过返回-1 显示踩过的样式 th:if="${comment.getObjs('liked')<0}"-->
+                            <button th:class="${comment.getObjs('liked')<0}?'down js-dislike pressed':'down js-dislike'"
+                                    onclick="postDislike(this)"
+                                    title="反对，不会显示你的姓名">
+                               <!--没踩过返回0-->
+
+                            <i class="icon vote-arrow"></i>
+                            <span class="label sr-only">反对，不会显示你的姓名</span>
+                            </button>
+                    </div>
+                    <div class="answer-head">
+                        <div class="zm-item-answer-author-info">
+                            <a class="zm-item-link-avatar avatar-link" href="" target="_blank"
+                               data-tip="p$t$yingxiaodao">
+                                <img th:src="${comment.getObjs('user').headUrl}"
+                                     class="zm-list-avatar avatar"></a>
+                            <!--点击用户名查看该用户的问题-->
+                            <a class="author-link" target="_blank" th:text="${comment.getObjs('user').name}"
+                               th:href="@{/user/profile/}+${comment.getObjs('user').id}">
+                            </a>
+                            </div>
+                        <div class="zm-item-vote-info" data-votecount="28" data-za-module="VoteInfo">
+                                <span class="voters text">
+                                    <a href="" class="more text">
+                                        <span th:text="${comment.getObjs('likeCount')}"
+                                              class="js-voteCount"></span>&nbsp;人赞同
+                                    </a>
+                                </span>
+                        </div>
+                    </div>
+                    <div class="zm-item-rich-text expandable js-collapse-body" data-resourceid="6727688"
+                         data-action="/answer/content" data-author-name="营销岛"
+                         data-entry-url="/question/36301524/answer/66862039">
+                        <!--回答摘要--><!--style="display:none;"-->
+                        <div class="zh-summary summary clearfix" style="display:none;"
+                            th:inline="text">
+                            [[${#strings.length(comment.getObjs('comment').content)} > 20?${#strings.substring(comment.getObjs('comment').content,0,5)}]]
+                            <a href="" class="toggle-expand">显示全部</a>
+                        </div>
+                        <!--回答内容-->
+                        <div class="zm-editable-content clearfix" th:text="${comment.getObjs('comment').content}">
+                        </div>
+                    </div>
+                    <a class="zg-anchor-hidden ac" name="22162611-comment"></a>
+                    <div class="zm-item-meta answer-actions clearfix js-contentActions">
+                        <div class="zm-meta-panel">
+                            <a itemprop="url" th:text="'发布于'+${#dates.format(comment.getObjs('comment').createdDate, 'yyyy-MM-dd HH:mm')}"
+                               class="answer-date-link meta-item" target="_blank" href="">发布于</a>
+
+                            <a href="" name="addcomment" class="meta-item toggle-comment js-toggleCommentBox">
+                                <i class="z-icon-comment"></i>4 条评论</a>
+                           <!-- <a href="" class="meta-item zu-autohide js-thank" data-thanked="false">
+                                <i class="z-icon-thank"></i>感谢</a>-->
+
+                            <button class="item-collapse js-collapse" style="transition: none;">
+                                <i class="z-icon-fold"></i>收起
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div th:if="${comments==null} or ${#lists.size(comments)}==0">
+                                <span>
+                                    暂无回答
+                                </span>
+                </div>
+                <!--#end-->
+            </div>
+            <a name="draft"></a>
+            <form th:action="@{/comment/add}" method="post" id="commentform">
+                <input type="hidden" name="entityId" th:value="${question!=null}?${question.id}" />
+            <div id="zh-question-answer-form-wrap" class="zh-question-answer-form-wrap">
+                <div class="zm-editable-editor-wrap" style="">
+                    <div class="zm-editable-editor-outer">
+                        <div class="zm-editable-editor-field-wrap">
+                            <textarea name="content" id="content" class="zm-editable-editor-field-element editable" style="font-style: italic;width:100%;"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="zm-command clearfix">
+                            <span class=" zg-right">
+                                <button id="addCommentBtn" type="button" class="submit-button zg-btn-blue">发布回答</button></span>
+                    </div>
+                </div>
+            </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<footer th:replace="commons/footer :: commonJs">
+</footer>
+<script th:src="@{/scripts/common.fed5411f.js}" src="scripts/common.fed5411f.js"></script>
+<script type="text/javascript" th:src="@{/scripts/main/site/detail.js}" ></script>
+<script>
+    /*踩按钮点击事件*/
+    function postDislike(obj) {
+        var commentId = $(obj).parent().attr("data-id");
+        //console.log();
+        $.ajax({
+                type: "post",
+                url: "/wenda/dislike",
+                dataType: "json",
+                data: {"commentId" : commentId},
+                success:function (data) {
+                    if(data.data.successMsg ==-1) { //未登录
+                        window.location.href = '/wenda/user/toLogin?next=' + window.decodeURIComponent(window.location.href);
+                    }  else  {
+                        $(obj).prev().find('.count.js-voteCount').text(data.data.successMsg);
+                        $(obj).parent().next().find('.js-voteCount').text(data.data.successMsg);
+                        $(obj).prev().attr({class:'up js-like'});
+                        $(obj).attr({class: 'down js-dislike pressed'})
+                    }
+                },
+                error:function (data) {
+                    alert("服务器异常")
+                }
+            }
+        );
+    }
+
+    /*赞按钮点击事件*/
+    function postLike(obj) {
+        var commentId = $(obj).parent().attr("data-id");
+        //console.log();
+        $.ajax({
+            type: "post",
+            url: "/wenda/like",
+            dataType: "json",
+            data: {"commentId" : commentId},
+            success:function (data) {
+              if(data.data.successMsg ==-1) { //未登录
+                  window.location.href = '/wenda/user/toLogin?next=' + window.decodeURIComponent(window.location.href);
+              }  else  {
+                  $(obj).find('.count.js-voteCount').text(data.data.successMsg);
+                  $(obj).parent().next().find('.js-voteCount').text(data.data.successMsg);
+                  $(obj).next().attr({class:'down js-dislike'});
+                  $(obj).attr({class: 'up js-like pressed'})
+              }
+            },
+                error:function (data) {
+                    alert("服务器异常")
+                }
+            }
+        );
+    }
+
+
+    $("#addCommentBtn").click(function () {
+        var reg = /^\s*$/;
+        var addCommentUri = $("#commentform").attr("action");
+        if(reg.test($("#content").val())) {
+            alert("内容不能为空");
+            return false;
+        }
+
+        $.ajax({
+            type: "post",
+            url: addCommentUri,
+            dataType: "json",
+            data:$("#commentform").serialize(),
+            success:function (data) {
+                if(data.data.successMsg == 1) { //插入回答成功
+                    location.reload();
+                    $("#content").val("");
+                } else if(data.data.errMsg == 1) { //未登录
+                    window.location.href = '/wenda/user/toLogin?next=' + window.encodeURIComponent(window.location.href);
+                } else {
+                    alert("服务器异常");
+                }
+            },
+            error: function (data) {
+                alert("fail");
+            }
+        })
+        return true;
+    })
+</script>
+
+</body>
+
+
+</html>

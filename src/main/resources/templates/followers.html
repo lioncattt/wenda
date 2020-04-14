@@ -1,0 +1,110 @@
+<!DOCTYPE html >
+<html lang="zh-CN"  xmlns:th="http://www.thymeleaf.org"
+      class="is-AppPromotionBarVisible cssanimations csstransforms csstransitions flexbox no-touchevents no-mobile">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>FollowersList</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <link rel="shortcut icon" th:href="@{/favicon.ico}">
+    <link rel="stylesheet" th:href="@{/styles/result.css}" href="../styles/result.css" />
+    <link rel="stylesheet" th:href="@{/styles/detail.css}" href="../../styles/detail.css">
+</head>
+<body class="zhi ">
+<!--header-->
+<div th:replace="commons/header :: #topbar"></div>
+    <div id="main">
+        <div class="zg-wrap zu-main clearfix ">
+            <div class="zm-profile-section-wrap zm-profile-followee-page">
+                <div class="zm-profile-section-head">
+                    <span class="zm-profile-section-name" th:inline="text">
+                        <a href="#" th:inline="text">
+                            [[${curUser.name}]]
+                        </a> 粉丝 [[${followCount}]] 人
+                    </span>
+                </div>
+                <div class="zm-profile-section-list">
+                    <div id="zh-profile-follows-list">
+                        <div class="zh-general-list clearfix">
+                            <!--#foreach($vo in $followers)-->
+                            <div th:each="vo:${followers}"
+                                    class="zm-profile-card zm-profile-section-item zg-clear no-hovercard">
+                               <!-- #if($vo.followed)-->
+                                <div th:if="${vo.getObjs('followed')}" class="zg-right">
+                                    <button th:if="${vo.getObjs('user').id}!=${user.id}"
+                                            th:attr="data-id=${vo.getObjs('user').id}"
+                                            class="zg-btn zg-btn-unfollow zm-rich-follow-btn small nth-0
+                                    js-follow-user" data-status="1" data-id="$vo.user.id">
+                                        取消关注
+                                    </button>
+                                </div>
+                                <!--#else-->
+                                <div th:if="${!vo.getObjs('followed')}" class="zg-right">
+                                    <button th:if="${vo.getObjs('user').id}!=${user.id}"
+                                            th:attr="data-id=${vo.getObjs('user').id}"
+                                            class="zg-btn zg-btn-follow zm-rich-follow-btn small nth-0
+                                    js-follow-user">关注
+                                    </button>
+                                </div>
+                                <!--#end-->
+                                <a title="Barty"  th:href="@{/user/profile/}+${vo.getObjs('user').id}"
+                                   class="zm-item-link-avatar" href="/user/${vo.user.id}">
+                                    <img src="${vo.user.headUrl}" th:src="${vo.getObjs('user').headUrl}"
+                                         class="zm-item-img-avatar">
+                                </a>
+                                <div class="zm-list-content-medium">
+                                    <h2 class="zm-list-content-title">
+                                        <a data-tip="p$t$buaabarty" th:text="${vo.getObjs('user').name}"
+                                           th:href="@{/user/profile/}+${vo.getObjs('user').id}"
+                                           href="/user/${vo.user.id}" class="zg-link" title="Barty">
+                                            ${vo.user.name}
+                                        </a>
+                                    </h2>
+
+                                    <!-- <div class="zg-big-gray">计蒜客教研首席打杂</div> -->
+                                    <div class="details zg-gray">
+                                        <a target="_blank"
+                                           th:href="@{/user/}+${vo.getObjs('user').id}+'/followers/0/50'"
+                                           href="/user/${vo.user.id}/followers"
+                                           th:inline="text"
+                                           class="zg-link-gray-normal">[[${vo.getObjs('followerCount')}]]粉丝
+                                        </a>
+                                        /
+                                        <a target="_blank" th:href="@{/user/}+${vo.getObjs('user').id}+'/followees/0/50'"
+                                           href="/user/${vo.user.id}/followees"
+                                           th:inline="text"
+                                           class="zg-link-gray-normal">
+                                            [[${vo.getObjs('followeeCount')}]]  关注
+                                        </a>
+                                        /
+                                        <a th:inline="text" target="_blank" href="#" class="zg-link-gray-normal">
+                                            [[${vo.getObjs('commentCount')}]] 回答
+                                        </a>
+                                        /
+                                        <a target="_blank" href="#" class="zg-link-gray-normal">
+                                            548 赞同
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div th:if="${followers==null} or ${#lists.size(followers)}==0">
+                                <span>
+                                    暂无粉丝!
+                                </span>
+                            </div>
+                            <!--#end-->
+                        </div>
+                        <a th:if="${followCount} gt 50" aria-role="button" class="zg-btn-white zu-button-more">更多</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<footer th:replace="commons/footer :: commonJs">
+</footer>
+
+<script type="text/javascript" th:src="@{/scripts/main/site/follow.js}" src="/scripts/main/site/follow.js">
+
+</script>
+
+</html>

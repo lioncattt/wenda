@@ -1,0 +1,78 @@
+<!DOCTYPE html >
+<html lang="zh-CN"  xmlns:th="http://www.thymeleaf.org"
+      class="is-AppPromotionBarVisible
+      cssanimations csstransforms csstransitions flexbox no-touchevents no-mobile">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Result</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <link rel="shortcut icon" th:href="@{/favicon.ico}">
+    <link rel="stylesheet" th:href="@{/styles/bootstrap.min.css}" type="text/css" href="/styles/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/styles/result.css}" href="../styles/result.css" />
+    <link rel="stylesheet" th:href="@{/styles/detail.css}" href="../../styles/detail.css">
+
+</head>
+<body class="page-search">
+<!--header-->
+<div th:replace="commons/header :: #topbar"></div>
+<!--#set($bodyclass = "page-search")-->
+<br/><br/><br/>
+<div class="zg-wrap zu-main clearfix"  role="main">
+    <div class="zu-main-content">
+        <div class="zu-main-content-inner">
+
+            <ul class="list contents navigable">
+                <li>
+                    <span th:if="${vos}==null or ${#lists.size(vos)}==0" >
+                        查无此结果!
+                    </span>
+                </li>
+                <!--#foreach($vo in $vos)-->
+                <li th:each="vo:${vos}" class="item clearfix">
+                    <div class="title">
+                        <a target="_blank" th:href="@{/user/profile/}+${vo.getObjs('user').id}"
+                           href="/user/$!{vo.user.id}" th:utext="${vo.getObjs('question').title}"
+                           class="js-title-link">
+                        </a>
+                    </div>
+                    <div class="content">
+
+                        <ul class="answers">
+                            <li class="answer-item clearfix">
+                                <div class="entry answer">
+                                    <div class="entry-left hidden-phone">
+                                        <a class="zm-item-vote-count hidden-expanded js-expand js-vote-count"
+                                           data-bind-votecount="" th:text="${vo.getObjs('followCount')}">
+
+                                        </a>
+                                    </div>
+                                    <div class="entry-body">
+                                        <div class="entry-meta">
+                                            <strong class="author-line" th:inline="text">
+                                                <!--$!{vo.user.name}，$data.format('yyyy-MM-dd HH:mm:ss', $!{vo.question.createdDate})-->
+                                                <a th:inline="text" class="author" th:href="@{/user/profile/}+${vo.getObjs('user').id}"
+                                                   href="/user/$!{vo.user.id}">
+                                                    [[${vo.getObjs('user').name}]]
+                                                </a>[[','+${#dates.format(vo.getObjs('question').createdDate, 'yyyy-MM-dd HH:mm')}]]
+                                            </strong>
+                                        </div>
+                                        <div class="entry-content js-collapse-body">
+                                            <!--$!{vo.question.content}-->
+                                            <div th:utext="${vo.getObjs('question').content}"  class="summary hidden-expanded" style="">
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+</body>
+<footer th:replace="commons/footer :: commonJs">
+</footer>
+</html>

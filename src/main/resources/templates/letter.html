@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"
+      class="is-AppPromotionBarVisible cssanimations csstransforms csstransitions flexbox no-touchevents no-mobile">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>msgList</title>
+    <link rel="shortcut icon" th:href="@{/favicon.ico}">
+    <link rel="stylesheet" th:href="@{/styles/bootstrap.min.css}" type="text/css" href="../styles/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/styles/font-awesome.min.css}" type="text/css" href="../styles/font-awesome.min.css">
+    <link rel="stylesheet" th:href="@{/styles/letter.css}" media="all" href="../styles/letter.css">
+</head>
+<body class="zhi "> <!--posts_show-->
+<!--header-->
+<div th:replace="commons/header :: #topbar"></div>
+
+    <div id="main">
+        <div class="zg-wrap zu-main clearfix ">
+            <ul class="letter-list">
+                <!--#foreach ($conversation in $conversations)-->
+                <li th:each="conversation:${conversations}" id="conversation-item-10001_622873">
+
+
+                <a class="letter-link" th:href="@{/msg/detail/}
+                +${conversation.getObjs('conversation').conversationId}+'/'
+                +${conversation.getObjs('unread')}
+                +'/0/50'"
+                   href="">
+                </a>
+                <div class="letter-info">
+                <span class="l-time" th:text="${#dates.format(conversation.getObjs('conversation').createdDate, 'yyyy-MM-dd HH:mm')}">
+                </span>
+                <div class="l-operate-bar">
+                    <!--
+                <a href="javascript:void(0);" class="sns-action-del" data-id="10001_622873">
+                删除
+                </a>
+                -->
+                <a th:text="'共'+${conversation.getObjs('conversation').msgNumbers}+'条消息'"
+                   th:href="@{/msg/detail/}
+                +${conversation.getObjs('conversation').conversationId}+'/'
+                +${conversation.getObjs('unread')}
+                +'/0/50'"
+                   href="">
+                    <!--$conversation.conversation.id-->
+                </a>
+                </div>
+                </div>
+                <div class="chat-headbox"><!--未读信息条数-->
+                <span class="msg-num" th:text="${conversation.getObjs('unread')}">
+                <!--$conversation.unread-->
+                </span>
+                <a class="list-head">
+                <img alt="头像" th:src="${conversation.getObjs('target').headUrl}">
+                </a>
+                </div>
+                <div class="letter-detail">
+                <a th:text="${conversation.getObjs('target').name}"
+                   title="$conversation.user.name" class="letter-name level-color-1">
+                    <!--$conversation.user.name-->
+                </a>
+                <p class="letter-brief">
+                <a th:text="${conversation.getObjs('conversation').content}"
+                   th:href="@{/msg/detail/}
+                +${conversation.getObjs('conversation').conversationId}+'/'
+                +${conversation.getObjs('unread')}
+                +'/0/50'"
+                   href="">
+                <!--$conversation.conversation.content-->
+                </a>
+                </p>
+                </div>
+                </li>
+                <li th:if="${conversations==null} or ${#lists.size(conversations)}==0">
+                    <span>暂无站内信通知</span>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+
+</body>
+<footer th:replace="commons/footer :: commonJs">
+</footer>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>login</title>
+    <link rel="shortcut icon" th:href="@{/favicon.ico}">
+    <link rel="stylesheet" th:href="@{/styles/default.css}" href="/default.css">
+    <link rel="stylesheet" th:href="@{/styles/global.css}" href="/global.css">
+    <link rel="stylesheet" th:href="@{/styles/ui.css}" href="/ui.css">
+    <link rel="stylesheet" th:href="@{/styles/base.css}" href="/base.css">
+    <link rel="stylesheet" th:href="@{/styles/regLogin.css}" href="/regLogin.css">
+</head>
+<body>
+<div class="nk-main clearfix">
+    <div class="wrapper">
+        <div class="tabbed">
+            <ul class="clearfix">
+                <li class="tab-selected" style="width:100%">
+                    <a href="javascript:void(0);"><span class="tab-login"></span>登录</a>
+                </li>
+            </ul>
+        </div>
+        <div class="wrapper-content clearfix">
+            <div class="input-section">
+                <form id="form1" method="post" th:action="@{/user/login}">
+
+                    <div class="form-group">
+                        <label for="jsEmailIpt" class="control-label">用户名</label>
+                        <div class="control-group">
+                            <input autocomplete="off"  name="name" type="text" id="jsEmailIpt" placeholder="请输入用户名">
+                            <i class="input-icon fui-cross"></i><!--成功图标-->
+                            <i class="input-icon fui-check-inverted"></i><!--失败图标-->
+                            <span id = "errMsg01" class="input-tip"></span><!--失败提示信息-->
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="jsPasswordIpt" class="control-label">密码</label>
+                        <div class="control-group">
+                            <input autocomplete="off" name="password" type="password" id="jsPasswordIpt" placeholder="请输入密码">
+                            <i class="input-icon fui-cross"></i><!--成功图标-->
+                            <i class="input-icon fui-check-inverted"></i><!--失败图标-->
+                            <span id="errMsg02" class="input-tip"></span><!--失败提示信息-->
+                        </div>
+                    </div>
+                    <!--将next参数传递-->
+                    <input id = "next" type="hidden" th:value="${next!=null}?${next}">
+                    <div class="form-group about-pwd">
+                        <div class="keep-pwd">
+                            <label><input name="rememberMe" type="checkbox" id="jsRemLoginChk" > 记住登录</label>
+                        </div>
+                        <a th:href="${next!=null}?@{/user/toRegister}+'?'+${next}:@{/user/toRegister}" class="forget-pwd">快速注册</a>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-input-login">
+                            <button type="button" class="btn btn-primary btn-block"
+                                    id="jsLoginBtn">立即登录
+                            </button>
+
+                            <!--<input type="submit" class="nk-invisible" />-->
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.8.3/jquery.min.js"></script>
+<script>
+
+       /*获取项目根路径*/
+       function getRootPath(){
+           var strFullPath=window.document.location.href;
+           var strPath=window.document.location.pathname;
+           var pos=strFullPath.indexOf(strPath);
+           var prePath=strFullPath.substring(0,pos);
+           var postPath=strPath.substring(0,strPath.substr(1).indexOf('/')+1);
+           return(prePath+postPath);
+       }
+
+        function submitForm() {
+            var loginUri = $("#form1").attr("action");
+            var username = $("#jsEmailIpt").val();
+            var password = $("#jsPasswordIpt").val();
+            var next = $("#next").val();
+            var rememberMe = $("#rememberMe").prop("checked");
+            console.log(rememberMe);
+           $.ajax({
+               type: "post",
+               url: loginUri,
+               dataType: "json",
+               data:{
+                  "name": username,
+                  "password": password,
+                  "next" : next,
+                   "rememberMe": rememberMe
+               },
+               success:function (data) {
+                  if(data.data.successMsg == 0) { //登录至之前的页面
+
+                      window.location.replace(next)
+                  } else if(data.data.successMsg == 1) { //至首页
+                      window.location.href = getRootPath();
+
+                  } else if(data.data.errCode==20001) {
+
+                          $("#jsEmailIpt").parent("div").attr({class: "control-group error"});
+                          $("#errMsg01").text("用户不存在");
+                      } else if(data.data.errCode==20002) {
+                          $("#jsPasswordIpt").parent("div").attr({class: "control-group error"});
+                          $("#errMsg02").text("密码错误");
+                      } else if(data.data.errCode==10001) {//后台校验传入参数有误
+                      $("#jsEmailIpt").parent("div").attr({class: "control-group error"});
+                      $("#jsPasswordIpt").parent("div").attr({class: "control-group error"});
+                      $("#errMsg01").text("请检查用户名和密码");
+                  } else if(data.data.errCode==20003) { //生成用户对应ticket失败
+                      $("#errMsg02").text("服务器开小差了请稍后重试");
+                  }
+
+
+               },
+               error: function (data) {
+                   alert("fail");
+               }
+
+               }
+           )
+        }
+
+
+
+        $("#jsEmailIpt").focus(function () {
+            $("#jsEmailIpt").parent("div").attr({class: "control-group"});
+            $("#errMsg01").text("")
+        });
+
+        $("#jsPasswordIpt").focus(function () {
+            $("#jsPasswordIpt").parent("div").attr({class: "control-group"});
+            $("#errMsg02").text("")
+        });
+
+
+        $("#jsLoginBtn").click(function () {
+            var flag = 1;
+            var username = $("#jsEmailIpt").val();
+            var password = $("#jsPasswordIpt").val();
+            //只能是字母，数字，
+            var reg = /^[a-zA-Z0-9]{3,12}$/;
+            //判空或空格
+            var reg2 = /^\s*$/;
+            var reg3 = /^[\S\n\s]{5,10}$/;
+            if(reg2.test(username)) {
+                $("#jsEmailIpt").parent("div").attr({class: "control-group error"});
+                $("#errMsg01").text("用户名不能为空")
+                flag = 0;
+
+            } else if(!reg.test(username)) {
+                $("#jsEmailIpt").parent("div").attr({class: "control-group error"});
+                $("#errMsg01").text("用户名只能是字母或数字")
+                flag = 0;
+            }
+            if(reg2.test(password)) {
+                $("#jsPasswordIpt").parent("div").attr({class: "control-group error"});
+                $("#errMsg02").text("密码不能为空")
+                flag = 0;
+
+            } else if(!reg3.test(password)) {
+                $("#jsPasswordIpt").parent("div").attr({class: "control-group error"});
+                $("#errMsg02").text("密码不合法")
+                flag = 0;
+            }
+
+            if(flag==1) {
+                submitForm()
+            }
+
+        })
+        
+
+</script>
+
+</body>
+</html>

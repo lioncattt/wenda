@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"
+      class="is-AppPromotionBarVisible cssanimations csstransforms csstransitions flexbox no-touchevents no-mobile">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>msgList</title>
+    <link rel="shortcut icon" th:href="@{/favicon.ico}">
+    <link rel="stylesheet" th:href="@{/styles/bootstrap.min.css}" type="text/css" href="../styles/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/styles/font-awesome.min.css}" type="text/css" href="../styles/font-awesome.min.css">
+    <link rel="stylesheet" th:href="@{/styles/letter.css}" media="all" href="../styles/letter.css">
+</head>
+<body class="zhi "> <!--posts_show-->
+<!--header-->
+<div th:replace="commons/header :: #topbar"></div>
+
+
+<div id="main">
+    <div class="zg-wrap zu-main clearfix ">
+        <ul class="letter-chatlist">
+           <!-- #foreach($message in $messages)-->
+            <li th:each="vo:${vos}" id="msg-item-4009580">
+                <a class="list-head">
+                    <img alt="头像" th:src="${vo.getObjs('user').headUrl}" src="$!message.headUrl">
+                </a>
+                <div class="tooltip fade right in">
+                    <div class="tooltip-arrow"></div>
+                    <div class="tooltip-inner letter-chat clearfix">
+                        <div class="letter-info">
+                            <p class="letter-time"
+                               th:text="${#dates.format(vo.getObjs('message').createdDate, 'yyyy-MM-dd HH:mm')}">
+                            </p>
+                            <!-- <a href="javascript:void(0);" id="del-link" name="4009580">删除</a> -->
+                        </div>
+                        <p class="chat-content" th:text="${vo.getObjs('message').content}">
+                          <!--  $!message.message.content-->
+                        </p>
+                    </div>
+                </div>
+            </li>
+
+        </ul>
+
+    </div>
+</div>
+
+</body>
+<footer th:replace="commons/footer :: commonJs">
+</footer>
+</html>

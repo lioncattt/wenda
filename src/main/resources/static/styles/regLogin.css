@@ -1,0 +1,187 @@
+.account-form-page {
+ background:#fff url(//static.nowcoder.com/images/res/infoComplete/bg.jpg) no-repeat top center;
+ height:770px;
+ padding-bottom:220px
+}
+.account-form-wrap {
+ padding:40px 80px 50px;
+ width:410px;
+ border-radius:4px;
+ background:rgba(255,255,255,.8);
+ *background:#fff;
+ margin:120px auto 0;
+ border:1px solid #eee;
+ text-align:center
+}
+.account-form-title {
+ text-align:center;
+ font-size:28px;
+ margin-bottom:25px
+}
+.complete-avatar {
+ width:75px;
+ height:75px;
+ overflow:hidden;
+ border:1px solid #eee;
+ margin:0 auto;
+ border-radius:50%;
+ position:relative
+}
+.avatar-pic {
+ width:75px;
+ height:75px;
+ overflow:hidden;
+ display:block;
+ border-radius:50%
+}
+.change-photo {
+ visibility:hidden;
+ width:75px;
+ height:75px;
+ position:absolute;
+ left:0;
+ top:0;
+ z-index:2;
+ background:url(//static.nowcoder.com/images/img/profile/photoHover.png) center center no-repeat
+}
+.avatar-pic:hover .change-photo {
+ visibility:visible
+}
+.change-account {
+ text-align:right;
+ font-size:14px;
+ margin-top:-15px;
+ margin-bottom:10px
+}
+.phone-code .control-group {
+ text-align:left
+}
+.wrapper {
+ border:1px solid #d6d6d6;
+ border-radius:4px;
+ background:#fff;
+ overflow:hidden
+}
+.account-form-wrap {
+ width:1000px;
+ padding:0
+}
+.tabbed li {
+ float:left;
+ background:#f3f4f5;
+ border-top:2px solid #f3f4f5;
+ width:50%;
+ text-align:center;
+ height:83px;
+ line-height:83px
+}
+.tabbed li.tab-selected {
+ background:#fff;
+ border-top:2px solid #25bb9b
+}
+.tabbed a {
+ color:#666;
+ font-size:24px;
+ display:block
+}
+.tab-selected a,
+.tabbed a:hover {
+ text-decoration:none;
+ color:#25bb9b
+}
+.tab-login,
+.tab-reg {
+ background:url(//static.nowcoder.com/images/img/icons/reg-login.png) no-repeat;
+ display:inline-block;
+ width:32px;
+ height:32px;
+ vertical-align:text-bottom;
+ margin-right:15px
+}
+.tab-reg {
+ background-position:0 -58px
+}
+.tab-selected .tab-login,
+a:hover .tab-login {
+ background-position:0 -174px
+}
+.tab-selected .tab-reg,
+a:hover .tab-reg {
+ background-position:0 -116px
+}
+.wrapper-content {
+ border-top:1px solid #ededed;
+ margin:0 20px;
+ padding:60px 10px 80px
+}
+.login-tips {
+ color:#999;
+ font-size:14px;
+ margin-top:-10px;
+ margin-left:110px;
+ text-align:left
+}
+.login-tips .hr-login {
+ background:url(//static.nowcoder.com/images/img/icons/icon-hr-login.png) 0 2px no-repeat;
+ padding-left:20px;
+ float:right;
+ color:#888
+}
+.login-tips .hr-login:hover {
+ text-decoration:underline
+}
+.keep-pwd {
+ margin-left:105px;
+ float:left
+}
+.login-qrcode-wrapper {
+ margin-left:110px;
+ white-space:nowrap
+}
+.login-qrcode-wrapper .icon-nc-invalid,
+.login-qrcode-wrapper .icon-nc-scan {
+ color:#25bb9b;
+ font-size:30px;
+ display:inline-block;
+ vertical-align:middle
+}
+.login-qrcode-wrapper .scan-box {
+ margin:20px 0
+}
+.login-qrcode-wrapper .scan-tips {
+ font-size:14px;
+ display:inline-block;
+ vertical-align:middle;
+ text-align:left;
+ margin-left:10px;
+ color:#777
+}
+.login-qrcode-wrapper .icon-nc-invalid {
+ color:#929aa1;
+ font-size:38px
+}
+.login-qrcode-wrapper .invalid-tips {
+ font-size:16px;
+ margin-left:0
+}
+.login-qrcode-wrapper:hover .guide-img {
+ display:inline-block
+}
+.login-qrcode {
+ width:80px;
+ height:80px;
+ display:inline-block;
+ vertical-align:middle;
+ background:#eee
+}
+.login-qrcode img {
+ width:100%
+}
+.guide-img {
+ display:none;
+ margin-left:30px;
+ vertical-align:middle
+}
+.reg-tips {
+ padding-top:20px
+}
