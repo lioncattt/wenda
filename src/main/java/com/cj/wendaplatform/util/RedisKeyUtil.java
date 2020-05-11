@@ -20,6 +20,9 @@ public class RedisKeyUtil {
     //注册验证码key
     private static String REG_CAPTCHA = "REG_CAPTCHA";
 
+    //*用于模糊查询
+    private static String PATTERN = "*";
+
     public static String getRegCaptcha(String phoneNumber) {
         return REG_CAPTCHA + SPLIT + phoneNumber;
     }
@@ -49,6 +52,20 @@ public class RedisKeyUtil {
         return BIZ_FOLLOWEE + SPLIT + String.valueOf(userId)
                 + SPLIT + String.valueOf(entityType);
     }
+
+    public static String getLikeAndDisLikeKeyPrefix() {
+        return PATTERN + BIZ_LIKE + SPLIT + PATTERN;
+    }
+
+    public static String getBizLike() {
+        return BIZ_LIKE;
+    }
+
+    public static String getFollowKeyPrefix() {
+        return PATTERN + BIZ_FOLLOWEE + SPLIT + PATTERN;
+    }
+
+
 
     public static String getTimelineKey(int userId) {
         return BIZ_TIMELINE + SPLIT + String.valueOf(userId);

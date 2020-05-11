@@ -10,8 +10,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
+import org.springframework.data.redis.core.ConvertingCursor;
+import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.util.HashMap;
@@ -67,6 +71,25 @@ public class RedisConfig extends CachingConfigurerSupport {
         expiresMap.put("token", 600L);
         redisCacheManager.setExpires(expiresMap);
         return redisCacheManager;
+    }
+
+    /**
+     * 由于RedisTemplate并没提供scan方法，需自己设置
+     * @param redisTemplate
+     * @param match
+     * @param count
+     * @return
+     */
+    public static Cursor<String> scan(RedisTemplate redisTemplate, String match, int count) {
+        ScanOptions options = ScanOptions.scanOptions()
+                .count(count)
+                .match(match).build();
+        RedisSerializer<String> redisSerializer = redisTemplate.getKeySerializer();
+        Cursor<String> cursor = (Cursor)redisTemplate.executeWithStickyConnection(
+                redisConnection -> new ConvertingCursor<>(redisConnection.scan(options),
+                        redisSerializer::deserialize)
+        );
+        return cursor;
     }
 
 

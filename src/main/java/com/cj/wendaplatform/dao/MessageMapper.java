@@ -62,7 +62,7 @@ public interface MessageMapper {
      * @return
      */
     @Select({"select count(id) from ", TABLE_NAME,
-            " WHERE has_read=0 and to_id = #{userId} and conversation_id = #{conversationId} "})
+            " WHERE has_read = 0 and to_id = #{userId} and conversation_id = #{conversationId} "})
     int selectConversationUnreadCount(@Param("userId") int userId,
                                       @Param("conversationId") String conversationId);
 

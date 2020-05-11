@@ -99,7 +99,6 @@ public class MessageController {
         List<Message> conversationList = messageService
                 .getConversationList(localUserId, offset, limit);
         for (Message msg : conversationList) {
-            /*System.out.println("消息数"+msg.getId());*/
             ViewObject vo = new ViewObject();
             vo.set("conversation", msg);//存入每一条对话
             //返回对方的id 判断当前用户是否是某一方(接收/发送)，返回对应的一方user
@@ -110,6 +109,7 @@ public class MessageController {
             vo.set("target", user);
             //查询有多少条未读信息
             vo.set("unread", messageService.getConversationUnreadCount(localUserId, msg.getConversationId()));
+
             conversations.add(vo);
         }
         model.addAttribute("conversations", conversations);
@@ -136,9 +136,8 @@ public class MessageController {
             try {
 
                 //返回更新成功条数
-               int flag = messageService.updateHasReadStatus(
+               messageService.updateHasReadStatus(
                        hostHolder.getUser().getId(), conversationId);
-//                System.out.println("flag =" + flag);
             } catch (Exception e) {
                 throw new BusinessException(EmBusinessError.MESSAGE_UPDATE_STATUS_ERROR);
             }

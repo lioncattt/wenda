@@ -1,10 +1,14 @@
 package com.cj.wendaplatform.service.impl;
 
+import com.cj.wendaplatform.model.Like;
 import com.cj.wendaplatform.service.LikeService;
 import com.cj.wendaplatform.util.JedisAdapter;
 import com.cj.wendaplatform.util.RedisKeyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * @author cj
@@ -62,4 +66,17 @@ public class LikeServiceImpl implements LikeService {
         jedisAdapter.srem(likeKey, String.valueOf(userId));
         return jedisAdapter.scard(likeKey);
     }
+
+    /**
+     * 批量同步点赞到数据库
+     * @param likeList
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int synLikeAndDisLikeToDataBase(List<Like> likeList) {
+
+        return 0;
+    }
+
 }

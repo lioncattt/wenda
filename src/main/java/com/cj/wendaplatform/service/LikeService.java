@@ -1,5 +1,9 @@
 package com.cj.wendaplatform.service;
 
+import com.cj.wendaplatform.model.Like;
+
+import java.util.List;
+
 /**
  * @author cj
  * @date 2019/7/29
@@ -14,4 +18,8 @@ public interface LikeService {
     long like(int userId, int entityType, int entityId);
 
     long disLike(int userId, int entityType, int entityId);
+
+    int synLikeAndDisLikeToDataBase(List<Like> likeList);
+
+
 }

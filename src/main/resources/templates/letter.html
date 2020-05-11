@@ -35,7 +35,7 @@
                 删除
                 </a>
                 -->
-                <a th:text="'共'+${conversation.getObjs('conversation').msgNumbers}+'条消息'"
+                <a th:text="'共'+${conversation.getObjs('conversation').id}+'条消息'"
                    th:href="@{/msg/detail/}
                 +${conversation.getObjs('conversation').conversationId}+'/'
                 +${conversation.getObjs('unread')}

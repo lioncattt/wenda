@@ -24,7 +24,7 @@
         (select count(*)
         from message m2
         where m2.conversation_id = m1.conversation_id
-        ) as msgNumbers
+        ) as id
         from message m1
         join (
         select conversation_id, max(created_date) as created_date
